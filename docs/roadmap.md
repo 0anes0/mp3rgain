@@ -13,7 +13,7 @@ What ships today:
 - Parallel processing across and within files, JSON and TSV output
 - GUI (mp3rgui) for macOS, Windows and Linux
 - A documented library API on crates.io and docs.rs
-- Distribution through crates.io, Homebrew, winget, .deb with an apt repository, Ubuntu PPA (deprecated, updated until 2026-12-31), AUR (GUI), MacPorts, a Nix flake and a GHCR Docker image
+- Distribution through crates.io, Homebrew, winget, .deb with an apt repository, Ubuntu PPA (deprecated, updated until 2026-12-31), AUR (GUI), MacPorts, pkgx, a Nix flake and a GHCR Docker image
 
 ## Open
 
@@ -23,7 +23,6 @@ What ships today:
 - [ ] Homebrew core formula (#8); today it is in the `M-Igashi/tap` tap
 - [ ] nixpkgs package (#314); the flake in this repo already works, see [packages/nix/README.md](../packages/nix/README.md)
 - [ ] Official Debian archive package (ITP submission) (#394); meanwhile every release is an apt repository
-- [ ] pkgx package (#395)
 - [ ] Fedora/RPM package
 - [ ] Flatpak package
 - [ ] FLAC support
@@ -39,6 +38,7 @@ What ships today:
 
 ## Unreleased
 
+- [x] mp3rgain is in pkgx (pkgxdev/pantry#14590): `pkgx mp3rgain` runs it on macOS and Linux, and new releases are picked up from GitHub automatically (#395)
 - [x] The Ubuntu PPA is deprecated in favour of the apt repository, which covers Ubuntu 26.04 as well as Debian 12+ and Ubuntu 22.04+. The PPA keeps receiving uploads until 2026-12-31. For the same version the apt repository's packages (`X.Y.Z-1`) take precedence over the PPA's (`X.Y.Z-0ppa1~resolute1`), so a PPA user moves over by adding the repository. The README, the docs and the website lead with the apt repository for every Debian and Ubuntu release
 - [x] apt.yml checks the install on Ubuntu 26.04 too, and simulates installing mp3rgui on every system it tests, since the GUI's dependencies are the stricter ones
 - [x] The download stats leave the apt repository's index files out of the GitHub Releases total, so `apt update` traffic does not count as downloads, and show key downloads and index refreshes on their own card

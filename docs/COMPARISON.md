@@ -158,6 +158,9 @@ sudo apt install mp3rgain
 # Arch Linux (community-maintained AUR package)
 yay -S mp3rgain-bin
 
+# pkgx (macOS, Linux)
+pkgx mp3rgain
+
 # Docker (linux/amd64, linux/arm64)
 docker run --rm -v /path/to/music:/music ghcr.io/m-igashi/mp3rgain:latest -r -R /music
 

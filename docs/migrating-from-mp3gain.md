@@ -203,6 +203,7 @@ The Linux release binaries are linked against glibc 2.34 or newer (Ubuntu 22.04,
 | Arch Linux | `yay -S mp3gain` (AUR) | `yay -S mp3rgain-bin` (community-maintained AUR package) |
 | macOS | `brew install mp3gain` | `brew install M-Igashi/tap/mp3rgain` or `sudo port install mp3rgain` |
 | Windows | SourceForge download | `winget install M-Igashi.mp3rgain` |
+| macOS / Linux (pkgx) | n/a | `pkgx mp3rgain` |
 | Any platform with Rust | n/a | `cargo install mp3rgain` |
 
 Users of MP3Gain's Windows GUI can install the desktop app instead: `winget install M-Igashi.mp3rgui`. Its defaults differ from the CLI's: clipping prevention and timestamp preservation are on, and album gain treats each folder as one album.
