@@ -184,16 +184,16 @@ The image is published for `linux/amd64` and `linux/arm64` with the tags `latest
       ghcr.io/m-igashi/mp3rgain:latest -r -k -R /music
 ```
 
-Or download a release binary. Asset names carry the version, so pin one:
+Or download a release binary. `mp3rgain-linux-x86_64.tar.gz` and `mp3rgain-linux-arm64.tar.gz` always come from the latest release:
 
 ```yaml
 - run: |
-    curl -fsSL https://github.com/M-Igashi/mp3rgain/releases/download/v3.11.0/mp3rgain-v3.11.0-linux-x86_64.tar.gz \
+    curl -fsSL https://github.com/M-Igashi/mp3rgain/releases/latest/download/mp3rgain-linux-x86_64.tar.gz \
       | sudo tar -xz -C /usr/local/bin mp3rgain
     mp3rgain -r -k music/*.mp3
 ```
 
-The Linux release binaries are linked against glibc 2.34 or newer (Ubuntu 22.04, Debian 12 and later). For anything older, use the Docker image.
+To pin a release instead, use `releases/download/vX.Y.Z/mp3rgain-vX.Y.Z-linux-x86_64.tar.gz`. The Linux binaries are statically linked against musl, so they run on any distribution regardless of its glibc. Releases up to v3.11.0 were linked against glibc 2.34 or newer and had no version-free names.
 
 ### Installing
 

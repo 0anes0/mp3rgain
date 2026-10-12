@@ -168,7 +168,7 @@ docker run --rm -v /path/to/music:/music ghcr.io/m-igashi/mp3rgain:latest -r -R 
 cargo install mp3rgain
 ```
 
-Prebuilt binaries for macOS (universal), Linux x86_64/arm64 and Windows x86_64/arm64 are on the [releases page](https://github.com/M-Igashi/mp3rgain/releases). Each is a single executable of a few MB with no dependencies beyond the system C library (glibc 2.34 or newer on Linux; the C runtime is linked statically on Windows, and the Docker image holds a static musl binary).
+Prebuilt binaries for macOS (universal), Linux x86_64/arm64 and Windows x86_64/arm64 are on the [releases page](https://github.com/M-Igashi/mp3rgain/releases). Each is a single executable of a few MB with no dependencies. The Linux binaries are statically linked against musl, so they run regardless of the glibc version, and the C runtime is linked statically on Windows.
 
 ## Migrating
 

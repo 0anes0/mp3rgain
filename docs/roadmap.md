@@ -42,6 +42,7 @@ What ships today:
 - [x] The Ubuntu PPA is deprecated in favour of the apt repository, which covers Ubuntu 26.04 as well as Debian 12+ and Ubuntu 22.04+. The PPA keeps receiving uploads until 2026-12-31. For the same version the apt repository's packages (`X.Y.Z-1`) take precedence over the PPA's (`X.Y.Z-0ppa1~resolute1`), so a PPA user moves over by adding the repository. The README, the docs and the website lead with the apt repository for every Debian and Ubuntu release
 - [x] apt.yml checks the install on Ubuntu 26.04 too, and simulates installing mp3rgui on every system it tests, since the GUI's dependencies are the stricter ones
 - [x] The download stats leave the apt repository's index files out of the GitHub Releases total, so `apt update` traffic does not count as downloads, and show key downloads and index refreshes on their own card
+- [x] The Linux CLI release binaries are statically linked against musl, so they run on any distribution: the glibc builds needed glibc 2.34 or newer, which ruled out Debian 11 and RHEL 8. Each release also carries them under version-free names, `mp3rgain-linux-x86_64.tar.gz` and `mp3rgain-linux-arm64.tar.gz`, so `releases/latest/download/` links always get the current one. Both were asked for by nautilus-scripts, which installs mp3rgain from these tarballs (cfgnunes/nautilus-scripts#150). The GUI stays on glibc, since it needs the system's GTK
 
 ## Release history
 

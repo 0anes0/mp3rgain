@@ -19,9 +19,11 @@ jobs:
             os: macos-latest
           - target: aarch64-apple-darwin
             os: macos-latest
-          - target: x86_64-unknown-linux-gnu
+          # musl links statically, so the CLI runs on any Linux regardless of
+          # its glibc (the gnu build needed 2.34+, which left out Debian 11).
+          - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
-          - target: aarch64-unknown-linux-gnu
+          - target: aarch64-unknown-linux-musl
             os: ubuntu-24.04-arm
           - target: x86_64-pc-windows-msvc
             os: windows-latest
@@ -198,21 +200,27 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         run: |
-          cd artifacts/mp3rgain-x86_64-unknown-linux-gnu
+          cd artifacts/mp3rgain-x86_64-unknown-linux-musl
           chmod +x mp3rgain
           tar -czvf "../../dist/mp3rgain-${TAG}-linux-x86_64.tar.gz" mp3rgain
           cd ../../dist
           shasum -a 256 "mp3rgain-${TAG}-linux-x86_64.tar.gz" > "mp3rgain-${TAG}-linux-x86_64.tar.gz.sha256"
+          # Version-free copy for /releases/latest/download/, as for the
+          # Windows installer below.
+          cp "mp3rgain-${TAG}-linux-x86_64.tar.gz" mp3rgain-linux-x86_64.tar.gz
+          shasum -a 256 mp3rgain-linux-x86_64.tar.gz > mp3rgain-linux-x86_64.tar.gz.sha256
 
       - name: Create Linux ARM64 tarball
         env:
           TAG: ${{ github.ref_name }}
         run: |
-          cd artifacts/mp3rgain-aarch64-unknown-linux-gnu
+          cd artifacts/mp3rgain-aarch64-unknown-linux-musl
           chmod +x mp3rgain
           tar -czvf "../../dist/mp3rgain-${TAG}-linux-arm64.tar.gz" mp3rgain
           cd ../../dist
           shasum -a 256 "mp3rgain-${TAG}-linux-arm64.tar.gz" > "mp3rgain-${TAG}-linux-arm64.tar.gz.sha256"
+          cp "mp3rgain-${TAG}-linux-arm64.tar.gz" mp3rgain-linux-arm64.tar.gz
+          shasum -a 256 mp3rgain-linux-arm64.tar.gz > mp3rgain-linux-arm64.tar.gz.sha256
 
       - name: Create Windows x86_64 zip
         env:
@@ -378,6 +386,10 @@ jobs:
             dist/mp3rgain-${{ github.ref_name }}-linux-x86_64.tar.gz.sha256
             dist/mp3rgain-${{ github.ref_name }}-linux-arm64.tar.gz
             dist/mp3rgain-${{ github.ref_name }}-linux-arm64.tar.gz.sha256
+            dist/mp3rgain-linux-x86_64.tar.gz
+            dist/mp3rgain-linux-x86_64.tar.gz.sha256
+            dist/mp3rgain-linux-arm64.tar.gz
+            dist/mp3rgain-linux-arm64.tar.gz.sha256
             dist/mp3rgain-${{ github.ref_name }}-windows-x86_64.zip
             dist/mp3rgain-${{ github.ref_name }}-windows-x86_64.zip.sha256
             dist/mp3rgain-${{ github.ref_name }}-windows-arm64.zip
