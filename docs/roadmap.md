@@ -1,6 +1,6 @@
 # mp3rgain Roadmap
 
-## Current status: v3.11.0 (2026-10-09)
+## Current status: v3.11.1 (2026-10-12)
 
 mp3rgain is a ReplayGain tool in the mp3gain lineage. It analyses loudness, writes standard `REPLAYGAIN_*` tags, and can bake the correction into the bitstream losslessly. For MP3 it is a modern drop-in replacement for mp3gain. For AAC it is the only actively maintained command-line tool that does this: aacgain has been abandoned since about 2009, and foobar2000, the reference-grade ReplayGain suite, offers a comparable scalefactor-based AAC rewrite ("Apply ReplayGain to file content") but only as a Windows GUI with no undo.
 
@@ -23,6 +23,7 @@ What ships today:
 - [ ] Homebrew core formula (#8); today it is in the `M-Igashi/tap` tap
 - [ ] nixpkgs package (#314); the flake in this repo already works, see [packages/nix/README.md](../packages/nix/README.md)
 - [ ] Official Debian archive package (ITP submission) (#394); meanwhile every release is an apt repository
+- [ ] Termux package (#399): termux/termux-packages#32543 is under review; if Termux declines it, submit it to the Termux User Repository (TUR) instead
 - [ ] Fedora/RPM package
 - [ ] Flatpak package
 - [ ] FLAC support
@@ -38,13 +39,19 @@ What ships today:
 
 ## Unreleased
 
+Nothing yet.
+
+## Release history
+
+### v3.11.1 - Static Linux Binaries & Version-free Download Names
+
+No behaviour change: the analysis, the gains and the files written are the same as in v3.11.0.
+
 - [x] mp3rgain is in pkgx (pkgxdev/pantry#14590): `pkgx mp3rgain` runs it on macOS and Linux, and new releases are picked up from GitHub automatically (#395)
 - [x] The Ubuntu PPA is deprecated in favour of the apt repository, which covers Ubuntu 26.04 as well as Debian 12+ and Ubuntu 22.04+. The PPA keeps receiving uploads until 2026-12-31. For the same version the apt repository's packages (`X.Y.Z-1`) take precedence over the PPA's (`X.Y.Z-0ppa1~resolute1`), so a PPA user moves over by adding the repository. The README, the docs and the website lead with the apt repository for every Debian and Ubuntu release
 - [x] apt.yml checks the install on Ubuntu 26.04 too, and simulates installing mp3rgui on every system it tests, since the GUI's dependencies are the stricter ones
 - [x] The download stats leave the apt repository's index files out of the GitHub Releases total, so `apt update` traffic does not count as downloads, and show key downloads and index refreshes on their own card
 - [x] The Linux CLI release binaries are statically linked against musl, so they run on any distribution: the glibc builds needed glibc 2.34 or newer, which ruled out Debian 11 and RHEL 8. Each release also carries them under version-free names, `mp3rgain-linux-x86_64.tar.gz` and `mp3rgain-linux-arm64.tar.gz`, so `releases/latest/download/` links always get the current one. Both were asked for by nautilus-scripts, which installs mp3rgain from these tarballs (cfgnunes/nautilus-scripts#150). The GUI stays on glibc, since it needs the system's GTK
-
-## Release history
 
 ### v3.11.0 - mp3gain Parity: Joint-stereo -l, Read-only Files & an apt Repository
 
