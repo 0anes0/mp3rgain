@@ -23,7 +23,7 @@ What ships today:
 - [ ] Homebrew core formula (#8); today it is in the `M-Igashi/tap` tap
 - [ ] nixpkgs package (#314); the flake in this repo already works, see [packages/nix/README.md](../packages/nix/README.md)
 - [ ] Official Debian archive package (ITP submission) (#394); meanwhile every release is an apt repository
-- [ ] Termux package (#399): termux/termux-packages#32543 is under review; if Termux declines it, submit it to the Termux User Repository (TUR) instead
+- [ ] Termux package (#399) through the Termux User Repository: termux-user-repository/tur#2899 is under review. The official repository declined it (termux/termux-packages#32543) because mp3rgain is not yet in enough distributions to count as well known there
 - [ ] Fedora/RPM package
 - [ ] Flatpak package
 - [ ] FLAC support
