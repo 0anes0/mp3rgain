@@ -13,7 +13,7 @@ What ships today:
 - Parallel processing across and within files, JSON and TSV output
 - GUI (mp3rgui) for macOS, Windows and Linux
 - A documented library API on crates.io and docs.rs
-- Distribution through crates.io, Homebrew, winget, .deb with an apt repository, Ubuntu PPA (deprecated, updated until 2026-12-31), AUR (GUI), MacPorts, pkgx, a Nix flake and a GHCR Docker image
+- Distribution through crates.io, Homebrew, winget, .deb with an apt repository, Ubuntu PPA (deprecated, updated until 2026-12-31), AUR (GUI), MacPorts, pkgx, Termux (TUR), a Nix flake and a GHCR Docker image
 
 ## Open
 
@@ -23,7 +23,6 @@ What ships today:
 - [ ] Homebrew core formula (#8); today it is in the `M-Igashi/tap` tap
 - [ ] nixpkgs package (#314); the flake in this repo already works, see [packages/nix/README.md](../packages/nix/README.md)
 - [ ] Official Debian archive package (ITP submission) (#394); meanwhile every release is an apt repository
-- [ ] Termux package (#399) through the Termux User Repository: termux-user-repository/tur#2899 is under review. The official repository declined it (termux/termux-packages#32543) because mp3rgain is not yet in enough distributions to count as well known there
 - [ ] Fedora/RPM package
 - [ ] Flatpak package
 - [ ] FLAC support
@@ -39,7 +38,7 @@ What ships today:
 
 ## Unreleased
 
-Nothing yet.
+- [x] mp3rgain is in the Termux User Repository (termux-user-repository/tur#2899, merged 2026-10-13), built for aarch64, arm, i686 and x86_64: `pkg install tur-repo`, then `pkg install mp3rgain`. TUR's bot picks up new releases. The official Termux repository declined it (termux/termux-packages#32543) because mp3rgain is not yet in enough distributions to count as well known there (#399)
 
 ## Release history
 

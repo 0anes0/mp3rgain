@@ -161,6 +161,9 @@ yay -S mp3rgain-bin
 # pkgx (macOS, Linux)
 pkgx mp3rgain
 
+# Android (Termux, from the Termux User Repository)
+pkg install tur-repo && pkg install mp3rgain
+
 # Docker (linux/amd64, linux/arm64)
 docker run --rm -v /path/to/music:/music ghcr.io/m-igashi/mp3rgain:latest -r -R /music
 

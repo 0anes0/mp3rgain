@@ -204,6 +204,7 @@ To pin a release instead, use `releases/download/vX.Y.Z/mp3rgain-vX.Y.Z-linux-x8
 | macOS | `brew install mp3gain` | `brew install M-Igashi/tap/mp3rgain` or `sudo port install mp3rgain` |
 | Windows | SourceForge download | `winget install M-Igashi.mp3rgain` |
 | macOS / Linux (pkgx) | n/a | `pkgx mp3rgain` |
+| Android (Termux) | n/a | `pkg install tur-repo && pkg install mp3rgain` |
 | Any platform with Rust | n/a | `cargo install mp3rgain` |
 
 Users of MP3Gain's Windows GUI can install the desktop app instead: `winget install M-Igashi.mp3rgui`. Its defaults differ from the CLI's: clipping prevention and timestamp preservation are on, and album gain treats each folder as one album.

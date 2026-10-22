@@ -42,6 +42,7 @@ mp3rgain changes the volume of MP3 and AAC files without re-encoding. It rewrite
 | Arch Linux (AUR, third-party) | `yay -S mp3rgain-bin` |
 | Nix | `nix profile install github:M-Igashi/mp3rgain` |
 | pkgx (macOS / Linux) | `pkgx mp3rgain` |
+| Android (Termux, from the Termux User Repository) | `pkg install tur-repo && pkg install mp3rgain` |
 | Docker | `docker pull ghcr.io/m-igashi/mp3rgain:latest` |
 | Cargo (Rust 1.85+) | `cargo install mp3rgain` |
 
