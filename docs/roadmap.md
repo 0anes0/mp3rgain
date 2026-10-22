@@ -1,12 +1,12 @@
 # mp3rgain Roadmap
 
-## Current status: v3.11.1 (2026-10-12)
+## Current status: v3.12.0 (2026-10-22)
 
 mp3rgain is a ReplayGain tool in the mp3gain lineage. It analyses loudness, writes standard `REPLAYGAIN_*` tags, and can bake the correction into the bitstream losslessly. For MP3 it is a modern drop-in replacement for mp3gain. For AAC it is the only actively maintained command-line tool that does this: aacgain has been abandoned since about 2009, and foobar2000, the reference-grade ReplayGain suite, offers a comparable scalefactor-based AAC rewrite ("Apply ReplayGain to file content") but only as a Windows GUI with no undo.
 
 What ships today:
 
-- Lossless gain via `global_gain` for MP3 (MPEG-1/2/2.5 Layer III) and AAC (M4A/MP4 and raw ADTS), with undo
+- Lossless gain via `global_gain` for MP3 (MPEG-1/2/2.5 Layer III) and AAC-LC (M4A/MP4 and raw ADTS), with undo; HE-AAC is skipped
 - ReplayGain 1.0 analysis by default (mp3gain-identical values); ReplayGain 2.0 (`--rg2`), EBU R128 (`--r128`) and true peak (`--true-peak`) as options
 - mp3gain command-line compatibility; the differences are listed in [migrating-from-mp3gain.md](migrating-from-mp3gain.md)
 - Tags-only mode, album grouping by directory, release tags or depth, reuse of stored tags (`-s R`)
@@ -39,12 +39,19 @@ What ships today:
 
 ## Unreleased
 
+Nothing yet.
+
+## Release history
+
+### v3.12.0 - FDK-AAC Crackling Fix & HE-AAC Skipped
+
+Behaviour changes: AAC encoded by FDK-AAC no longer crackles after a gain change. HE-AAC (v1 and v2) is skipped with a message instead of being gained and analyzed wrongly. A file that still has unparsed AAC frames gets a warning. Files gained by v2.8.0 to v3.11.1 that crackle have to be undone with the version that gained them, before upgrading.
+
 - [x] AAC: a fill element whose escape count is 0 (14 fill bytes, which FDK-AAC writes) was read as 15 bytes, so the frame failed to parse and silently kept its original gain. After a large gain change each such frame stood out from its neighbours by up to the whole change, heard as crackling. Broken since v2.8.0; affects M4A and raw ADTS. A 256 kbps FDK-AAC encode had 13 such frames in 4.5 minutes. A file gained by an affected version has to be undone with that version: the fixed parser reaches the frames the old one skipped, so its undo would raise them instead (#402)
 - [x] AAC frames the parser cannot read, which keep their original gain, are reported instead of dropped silently: a warning per file in the CLI (also in the JSON `warning` field) and "Done (N frames unparsed)" in the GUI's status column (#402)
 - [x] HE-AAC (v1 and v2, in M4A or raw ADTS) is skipped with a message, like ALAC, by every command that would analyze it or change its gain. `global_gain` only reaches the AAC core, so a gain change left the SBR high band at its original level, as many dB too loud as the change. The analysis was wrong too: symphonia decodes the core without SBR or parametric stereo, at the core's sample rate even when the MP4 declares twice that, which put R128 loudness up to 1.6 dB off. Detected from the SBR payload in the frames themselves, the only signal raw ADTS carries, reading the `moov` box and the first eight frames rather than the whole file. Undo, `-s c` and `-s d` still work, so a file adjusted by an earlier version can be restored (#403)
 - [x] The GUI shows why a file failed: the reason appears on hover over "Error" in the status column, which until now showed nothing more (#403)
-
-## Release history
+- [x] Dependencies: serde_json 1.0.154, winresource 0.1.34 (GUI build), and the upload/download-artifact and CodeQL actions (#400, #401)
 
 ### v3.11.1 - Static Linux Binaries & Version-free Download Names
 
