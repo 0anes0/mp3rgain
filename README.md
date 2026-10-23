@@ -24,6 +24,9 @@ mp3rgain changes the volume of MP3 and AAC files without re-encoding. It rewrite
 - **One binary**: no runtime or codecs to install. macOS (universal), Linux and Windows, each on x86_64 and ARM64.
 - **GUI**: `mp3rgui`, a desktop app with drag and drop.
 
+> [!IMPORTANT]
+> **AAC files that crackle after a gain change by mp3rgain 2.8.0 to 3.11.1:** those versions left some frames of FDK-AAC encodes at their original volume ([#402](https://github.com/M-Igashi/mp3rgain/issues/402)). Undo such files with the old version first (`mp3rgain -u`, or Undo Selected in mp3rgui), then upgrade and apply the gain again. Undoing them with 3.12.0 or later makes it worse: the new version also moves the frames the old one never changed, so they end up louder than the original. If you have already upgraded, the 3.11.1 downloads are on [its release page](https://github.com/M-Igashi/mp3rgain/releases/tag/v3.11.1). MP3 files, and AAC files that do not crackle, need nothing. Details are in the [3.12.0 release notes](https://github.com/M-Igashi/mp3rgain/releases/tag/v3.12.0).
+
 **Preparing DJ tracks for rekordbox and CDJs?** [Bake'n Deck](https://baken.ravers.workers.dev) has mp3rgain built in and adds true peak ceiling gain for FLAC, AIFF and WAV, key + BPM playlist sorting, and a CDJ-safe MP3 export.
 
 ## Installation
