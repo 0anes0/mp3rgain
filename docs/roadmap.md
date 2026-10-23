@@ -22,7 +22,7 @@ What ships today:
 - [ ] Upgrade mp3rgui's egui/eframe stack, which also retires the quick-xml audit ignores in `ci.yml`
 - [ ] Homebrew core formula (#8); today it is in the `M-Igashi/tap` tap
 - [ ] nixpkgs package (#314); the flake in this repo already works, see [packages/nix/README.md](../packages/nix/README.md)
-- [ ] Official Debian archive package (ITP submission) (#394); meanwhile every release is an apt repository
+- [ ] Official Debian archive package (#394): the ITP is [#1126519](https://bugs.debian.org/1126519); `id3` still needs packaging in `debcargo-conf`, `indicatif` 0.18 and `console` 0.16 are only in experimental, and the upload needs a sponsor. Meanwhile every release is an apt repository
 - [ ] Fedora/RPM package
 - [ ] Flatpak package
 - [ ] FLAC support
