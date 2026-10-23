@@ -1,19 +1,19 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.12.0.schema.json
 
 PackageIdentifier: M-Igashi.mp3rgui
-PackageVersion: 3.12.0
+PackageVersion: 3.12.1
 InstallerLocale: en-US
 InstallerType: zip
 NestedInstallerType: portable
 NestedInstallerFiles:
   - RelativeFilePath: mp3rgui.exe
-ReleaseDate: 2026-10-22
+ReleaseDate: 2026-10-24
 Installers:
   - Architecture: x64
-    InstallerUrl: https://github.com/M-Igashi/mp3rgain/releases/download/v3.12.0/mp3rgui-v3.12.0-windows-x86_64.zip
-    InstallerSha256: 650EC130BB4B366E4B7AD3552BA8B36A44DE3145ACE7B1BB30D50F1FFCEDD0CD
+    InstallerUrl: https://github.com/M-Igashi/mp3rgain/releases/download/v3.12.1/mp3rgui-v3.12.1-windows-x86_64.zip
+    InstallerSha256: BDC849D8FE698A6C36577FB03397F5EAFB46FFEA9BB2EE24B3E2B51FD596A474
   - Architecture: arm64
-    InstallerUrl: https://github.com/M-Igashi/mp3rgain/releases/download/v3.12.0/mp3rgui-v3.12.0-windows-arm64.zip
-    InstallerSha256: 6089E43D0A4BD60C51442E02709281B0383071A6A1234B84D111D842D9297A93
+    InstallerUrl: https://github.com/M-Igashi/mp3rgain/releases/download/v3.12.1/mp3rgui-v3.12.1-windows-arm64.zip
+    InstallerSha256: 1CF19A3158725E5021437C0BD838E42AE91912E67FD5164606AEBB60D9140EA5
 ManifestType: installer
 ManifestVersion: 1.12.0
