@@ -1,6 +1,6 @@
 # mp3rgain Roadmap
 
-## Current status: v3.12.0 (2026-10-22)
+## Current status: v3.12.1 (2026-10-24)
 
 mp3rgain is a ReplayGain tool in the mp3gain lineage. It analyses loudness, writes standard `REPLAYGAIN_*` tags, and can bake the correction into the bitstream losslessly. For MP3 it is a modern drop-in replacement for mp3gain. For AAC it is the only actively maintained command-line tool that does this: aacgain has been abandoned since about 2009, and foobar2000, the reference-grade ReplayGain suite, offers a comparable scalefactor-based AAC rewrite ("Apply ReplayGain to file content") but only as a Windows GUI with no undo.
 
@@ -38,10 +38,18 @@ What ships today:
 
 ## Unreleased
 
-- [x] mp3rgain is in the Termux User Repository (termux-user-repository/tur#2899, merged 2026-10-13), built for aarch64, arm, i686 and x86_64: `pkg install tur-repo`, then `pkg install mp3rgain`. TUR's bot picks up new releases. The official Termux repository declined it (termux/termux-packages#32543) because mp3rgain is not yet in enough distributions to count as well known there (#399)
-- [x] mp3rgui shows each file's average bitrate and whether an MP3 is CBR or VBR, in two sortable columns filled in when files are added, without an analysis. An MP3 is judged from the Xing, Info or VBRI header in its first frame, which needs only the start of the file; one without such a header has every frame read. An M4A's bitrate comes from its `moov` box (the sample sizes over the duration, as ffmpeg computes it) and its CBR/VBR cell stays empty, since AAC frames vary in size whatever the encoder setting. Raw ADTS shows neither. Library: new `read_bitrate`, `Bitrate` and `BitrateMode` (#408)
+Nothing yet.
 
 ## Release history
+
+### v3.12.1 - Bitrate & CBR/VBR in mp3rgui, Termux Install
+
+No change to the analysis, the gains or the files written: the CLI behaves as in v3.12.0. mp3rgui gains two columns.
+
+- [x] mp3rgain is in the Termux User Repository (termux-user-repository/tur#2899, merged 2026-10-13), built for aarch64, arm, i686 and x86_64: `pkg install tur-repo`, then `pkg install mp3rgain`. TUR's bot picks up new releases. The official Termux repository declined it (termux/termux-packages#32543) because mp3rgain is not yet in enough distributions to count as well known there (#399)
+- [x] mp3rgui shows each file's average bitrate and whether an MP3 is CBR or VBR, in two sortable columns filled in when files are added, without an analysis. An MP3 is judged from the Xing, Info or VBRI header in its first frame, which needs only the start of the file; one without such a header has every frame read. An M4A's bitrate comes from its `moov` box (the sample sizes over the duration, as ffmpeg computes it) and its CBR/VBR cell stays empty, since AAC frames vary in size whatever the encoder setting. Raw ADTS shows neither. Library: new `read_bitrate`, `Bitrate` and `BitrateMode` (#408)
+- [x] The README warns, as the v3.12.0 release notes did, that AAC files gained by v2.8.0 to v3.11.1 which crackle have to be undone with the old version before upgrading (#402)
+- [x] Dependencies: the CodeQL actions (#407)
 
 ### v3.12.0 - FDK-AAC Crackling Fix & HE-AAC Skipped
 
