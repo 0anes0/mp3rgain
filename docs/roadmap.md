@@ -38,7 +38,7 @@ What ships today:
 
 ## Unreleased
 
-Nothing yet.
+- [x] The crates.io package includes the test fixtures and the man page, so its unit tests pass when a distribution builds from it: Debian runs them during the build and for every feature. Without the fixtures 13 of them failed. Needed for the official Debian package (#394)
 
 ## Release history
 
