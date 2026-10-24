@@ -3190,19 +3190,27 @@ mod tests {
     // decoder-vs-decoder gap seen end-to-end against mp3gain.
     // =========================================================================
 
+    /// `GetTitleGain()` from the reference harness in `tests/reference/` on
+    /// `golden_pcm(rate)`, captured with `./tests/reference/run.sh`. 44100 Hz
+    /// is the #201 / #217 value. 22050 and 11025 Hz are the two rates whose
+    /// 50 ms window is not a whole number of samples, which mp3rgain truncated
+    /// until #413 while the reference rounds up.
     #[cfg(feature = "replaygain")]
-    const GOLDEN_PCM_SAMPLE_RATE: u32 = 44_100;
-
-    /// 80 full 50 ms windows (44100 * 0.05 = 2205 samples each). An exact
-    /// multiple of the window leaves no trailing partial window — the reference
-    /// gain_analysis.c only counts a window when it fills, while mp3rgain's
-    /// final `finish_window()` would flush a partial one. Matching the window
-    /// boundary removes that as a variable.
-    #[cfg(feature = "replaygain")]
-    const GOLDEN_PCM_FRAMES: usize = 2205 * 80;
+    const GOLDEN_GAINS_DB: [(u32, f64); 3] = [
+        (44_100, -0.8300000000000125),
+        (22_050, -3.710000000000008),
+        (11_025, -5.910000000000011),
+    ];
 
     /// Deterministic stereo PCM (normalized to [-1, 1]) used by both the
     /// reference C harness in `tests/reference/` and the test below.
+    ///
+    /// 80 full 50 ms windows, with the window rounded up to whole samples as
+    /// gain_analysis.c does (2205 at 44.1 kHz, 1103 at 22.05 kHz). An exact
+    /// multiple of the window leaves no trailing partial window: the reference
+    /// only counts a window when it fills, while mp3rgain's final
+    /// `finish_window()` would flush a partial one. Matching the window
+    /// boundary removes that as a variable.
     ///
     /// Layout (80 windows of 50 ms): the first 50 are **silent**, the last 30
     /// are broadband white noise on a distinct-amplitude staircase. The silent
@@ -3219,9 +3227,9 @@ mod tests {
     /// therefore bit-identical on every platform, so the golden value captured
     /// on one machine is valid for the CI runner too.
     #[cfg(feature = "replaygain")]
-    fn golden_pcm() -> (Vec<f64>, Vec<f64>) {
-        let win = (GOLDEN_PCM_SAMPLE_RATE as usize * 50) / 1000; // 2205 @ 44.1k
-        let n = GOLDEN_PCM_FRAMES;
+    fn golden_pcm(sample_rate: u32) -> (Vec<f64>, Vec<f64>) {
+        let win = (sample_rate as usize * 50).div_ceil(1000);
+        let n = win * 80;
         let mut left = Vec::with_capacity(n);
         let mut right = Vec::with_capacity(n);
         let mut ls: u64 = 0x1234_5678_9abc_def0;
@@ -3251,7 +3259,8 @@ mod tests {
 
     /// One-time helper: dump `golden_pcm()` to a binary file the reference C
     /// harness reads. Header is `[u32 sample_rate][u32 frames]` (LE) followed by
-    /// `frames` f64 left samples then `frames` f64 right samples. Run with:
+    /// `frames` f64 left samples then `frames` f64 right samples. `RG_PCM_RATE`
+    /// picks the sample rate (default 44100). Run with:
     ///   `cargo test --lib dump_golden_pcm -- --ignored --nocapture`
     /// then see `tests/reference/README.md` to produce the golden value.
     #[cfg(feature = "replaygain")]
@@ -3260,9 +3269,12 @@ mod tests {
     fn dump_golden_pcm() {
         let path =
             std::env::var("RG_PCM_DUMP").unwrap_or_else(|_| "/tmp/rg_golden_pcm.bin".to_string());
-        let (left, right) = golden_pcm();
+        let sample_rate: u32 = std::env::var("RG_PCM_RATE")
+            .map(|r| r.parse().expect("RG_PCM_RATE must be a sample rate"))
+            .unwrap_or(44_100);
+        let (left, right) = golden_pcm(sample_rate);
         let mut buf = Vec::with_capacity(8 + left.len() * 16);
-        buf.extend_from_slice(&GOLDEN_PCM_SAMPLE_RATE.to_le_bytes());
+        buf.extend_from_slice(&sample_rate.to_le_bytes());
         buf.extend_from_slice(&(left.len() as u32).to_le_bytes());
         // Write the exact values the filter sees: normalized × 16-bit scale.
         // The reference harness feeds these straight into AnalyzeSamples, so
@@ -3293,7 +3305,7 @@ mod tests {
     /// dropped. Without the `finish_window` clamp, mp3rgain reads −1.50 dB here
     /// vs the reference −0.83 dB; with it, they agree to the last ULP.
     ///
-    /// `GOLDEN_GAIN_DB` was captured by running the reference harness in
+    /// `GOLDEN_GAINS_DB` was captured by running the reference harness in
     /// `tests/reference/` on the exact bytes `golden_pcm()` emits — same
     /// lineage mp3gain uses (Glen Sawyer's gain_analysis.c), compiled with
     /// `Float_t = double` to match mp3gain's original precision and mp3rgain's
@@ -3301,33 +3313,28 @@ mod tests {
     #[cfg(feature = "replaygain")]
     #[test]
     fn analysis_matches_reference_c_to_float_precision() {
-        // GetTitleGain() from tests/reference/ on golden_pcm() (44100 Hz, stereo),
-        // captured with `./tests/reference/run.sh`. mp3rgain reproduces this to
-        // the last ULP (Δ < 1e-15 dB) — the analysis is bit-faithful, including
-        // the silent-window histogram clamp (#217).
-        const GOLDEN_GAIN_DB: f64 = -0.83000000000001251;
+        for (sr, golden) in GOLDEN_GAINS_DB {
+            let (left, right) = golden_pcm(sr);
+            let mut filter_l = EqualLoudnessFilter::new(sr).unwrap();
+            let mut filter_r = EqualLoudnessFilter::new(sr).unwrap();
+            let mut analyzer = ReplayGainAnalyzer::new(sr);
 
-        let (left, right) = golden_pcm();
-        let sr = GOLDEN_PCM_SAMPLE_RATE;
-        let mut filter_l = EqualLoudnessFilter::new(sr).unwrap();
-        let mut filter_r = EqualLoudnessFilter::new(sr).unwrap();
-        let mut analyzer = ReplayGainAnalyzer::new(sr);
+            // Identical to process_audio_buffer's F32 path: normalized samples are
+            // scaled to 16-bit range before filtering, then squared per window.
+            for (&l, &r) in left.iter().zip(right.iter()) {
+                let lf = filter_l.process(l * SAMPLE_SCALE_16BIT);
+                let rf = filter_r.process(r * SAMPLE_SCALE_16BIT);
+                analyzer.add_sample(lf, rf);
+            }
+            analyzer.finish_window(); // no-op: golden_pcm() is a window multiple
+            let gain = PINK_REF - analyzer.get_loudness();
 
-        // Identical to process_audio_buffer's F32 path: normalized samples are
-        // scaled to 16-bit range before filtering, then squared per window.
-        for (&l, &r) in left.iter().zip(right.iter()) {
-            let lf = filter_l.process(l * SAMPLE_SCALE_16BIT);
-            let rf = filter_r.process(r * SAMPLE_SCALE_16BIT);
-            analyzer.add_sample(lf, rf);
+            let delta = (gain - golden).abs();
+            assert!(
+                delta < 1e-6,
+                "ReplayGain analysis at {sr} Hz diverged from reference gain_analysis.c: \
+                 mp3rgain {gain:.12} dB vs reference {golden:.12} dB (Δ {delta:.3e} dB)"
+            );
         }
-        analyzer.finish_window(); // no-op: GOLDEN_PCM_FRAMES is a window multiple
-        let gain = PINK_REF - analyzer.get_loudness();
-
-        let delta = (gain - GOLDEN_GAIN_DB).abs();
-        assert!(
-            delta < 1e-6,
-            "ReplayGain analysis diverged from reference gain_analysis.c: \
-             mp3rgain {gain:.12} dB vs reference {GOLDEN_GAIN_DB:.12} dB (Δ {delta:.3e} dB)"
-        );
     }
 }

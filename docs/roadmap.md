@@ -39,6 +39,7 @@ What ships today:
 ## Unreleased
 
 - [x] The crates.io package includes the test fixtures and the man page, so its unit tests pass when a distribution builds from it: Debian runs them during the build and for every feature. Without the fixtures 13 of them failed. Needed for the official Debian package (#394)
+- [x] ReplayGain 1.0 analysis matches mp3gain at the MPEG-2 and MPEG-2.5 sample rates. One 16 kHz filter coefficient had two digits swapped (#412), and the 50 ms RMS window was one sample short at 22050 and 11025 Hz, where mp3gain rounds up (#413). On real music at those rates the track gain moves by up to 0.05 dB and now agrees with mp3gain within 0.01 dB; no gain step changed in the files tried, and other rates are unchanged. The golden test against the reference `gain_analysis.c` now runs at 22050 and 11025 Hz as well. Found and fixed by @cfgnunes
 
 ## Release history
 

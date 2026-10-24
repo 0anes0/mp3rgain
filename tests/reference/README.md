@@ -24,12 +24,12 @@ identical samples into mp3rgain's analyzer and into the reference C, and compare
   the upstream `float`, to match mp3gain's original precision and mp3rgain's
   f64. LGPL-2.1; used here for local verification only.
 - `main.c` — reads the PCM dump and prints `GetTitleGain()`.
-- `run.sh` — regenerates the dump from Rust, compiles the harness, prints the
-  gain.
+- `run.sh` — compiles the harness, regenerates the dump from Rust for each
+  sample rate (44100, 22050 and 11025 Hz by default), prints the gains.
 
 This is **not** built by Cargo and **not** shipped in the crate (`tests/` is
 excluded from the package, and no C toolchain is added to CI). It exists to
-reproduce the golden value frozen in `src/replaygain.rs`.
+reproduce the golden values frozen in `src/replaygain.rs`.
 
 ## Reproduce
 
