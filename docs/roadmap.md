@@ -1,6 +1,6 @@
 # mp3rgain Roadmap
 
-## Current status: v3.12.1 (2026-10-24)
+## Current status: v3.13.0 (2026-10-25)
 
 mp3rgain is a ReplayGain tool in the mp3gain lineage. It analyses loudness, writes standard `REPLAYGAIN_*` tags, and can bake the correction into the bitstream losslessly. For MP3 it is a modern drop-in replacement for mp3gain. For AAC it is the only actively maintained command-line tool that does this: aacgain has been abandoned since about 2009, and foobar2000, the reference-grade ReplayGain suite, offers a comparable scalefactor-based AAC rewrite ("Apply ReplayGain to file content") but only as a Windows GUI with no undo.
 
@@ -38,6 +38,14 @@ What ships today:
 
 ## Unreleased
 
+Nothing yet.
+
+## Release history
+
+### v3.13.0 - mp3gain Parity: ReplayGain 1.0 Analysis, -d, -k & Silent Frames
+
+Behaviour changes: ReplayGain 1.0 values now match mp3gain 1.6.2. On 118 real MP3s every track and album gain is identical to mp3gain's, where v3.12.1 differed on 19 tracks by up to 1.3 dB and on two by a gain step, so re-analyzing a library can move a few tracks by a step. `-d` is rounded together with the measured gain, `-k` caps track gain at mp3gain's 16-bit limit and album gain once for the whole album, a `global_gain` of 0 is left as it is, and a track shorter than 50 ms is refused as mp3gain refuses it. AAC analysis and the `--rg2` / `--r128` modes are unchanged.
+
 - [x] The crates.io package includes the test fixtures and the man page, so its unit tests pass when a distribution builds from it: Debian runs them during the build and for every feature. Without the fixtures 13 of them failed. Needed for the official Debian package (#394)
 - [x] ReplayGain 1.0 analysis matches mp3gain at the MPEG-2 and MPEG-2.5 sample rates. One 16 kHz filter coefficient had two digits swapped (#412), and the 50 ms RMS window was one sample short at 22050 and 11025 Hz, where mp3gain rounds up (#413). On real music at those rates the track gain moves by up to 0.05 dB and now agrees with mp3gain within 0.01 dB; no gain step changed in the files tried, and other rates are unchanged. The golden test against the reference `gain_analysis.c` now runs at 22050 and 11025 Hz as well. Found and fixed by @cfgnunes
 - [x] MP3: a gain change without `-w` leaves a `global_gain` of 0 as it is, as mp3gain does. Encoders write 0 for silent frames, and some leave audio data behind it, so `-g`, `-r` or `-a` with a positive step turned those frames up. On such files the audio frames of `-g` were not byte-identical to mp3gain's, and the stored `MP3GAIN_MINMAX` minimum moved off 0. Undo leaves the 0 alone as well, so a frame that was already 0 before a negative change comes back exactly, and the clamping warning no longer counts it. AAC already worked this way. Reported by @cfgnunes (#417)
@@ -47,8 +55,6 @@ What ships today:
 - [x] Album gain with `-k` lowers the whole album by one amount, set by its loudest track, as mp3gain's `-a -k` does, instead of capping each file at its own headroom, which left quiet tracks at the full album gain while loud ones were cut and so changed the album's relative levels. The output says once that the album gain was reduced, and the JSON album `gain_steps` is the value applied. The GUI's Apply Album Gain with prevent clipping on does the same for each album group, from each row's current peak. On the fixtures the files of a capped album are byte-identical to mp3gain's. Reported by @cfgnunes (#419)
 - [x] ReplayGain 1.0 analysis drops the samples left over after the last full 50 ms window, as mp3gain's `gain_analysis.c` does, instead of counting them as one more window. On the Crossfader Music Pack one track and one album (the acapellas) moved by 0.01 dB, the track to exactly mp3gain's value, and no gain step changed. A track that fills no window at all is refused with "Not enough samples to do analysis" and exit status 1, as in mp3gain, where it used to be measured from a fraction of a window; an album leaves it out and is analyzed from its other files, in the CLI and the GUI. The BS.1770 modes are unchanged. The golden test against the reference C has a case ending on a partial window. Reported by @cfgnunes (#414, #423)
 - [x] ReplayGain 1.0 analysis and `-x` decode MP3 the way mp3gain does, keeping the encoder delay and padding of a LAME-encoded file, which Symphonia trims. The trim shifted every 50 ms window by about 1100 samples. On 118 real MP3s 19 track gains differed from mp3gain's, by up to 1.3 dB, and two by a gain step; now every track and album gain matches mp3gain's, and `-r` on the worst of them writes the same bytes. A 20 ms LAME-encoded file is measured as mp3gain measures it instead of being refused as too short. The BS.1770 modes and AAC are unchanged (#430)
-
-## Release history
 
 ### v3.12.1 - Bitrate & CBR/VBR in mp3rgui, Termux Install
 
