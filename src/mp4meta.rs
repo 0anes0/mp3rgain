@@ -318,7 +318,7 @@ impl ReplayGainTags {
 pub struct UndoTags {
     /// Cumulative gain adjustment, format: "+003,+003,N" (left,right,wrap_flag)
     undo: Option<String>,
-    /// Original min/max global_gain before any modification, format: "80,120"
+    /// Original min/max global_gain before any modification, format: "080,120"
     minmax: Option<String>,
 }
 

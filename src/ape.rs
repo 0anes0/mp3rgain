@@ -622,9 +622,13 @@ pub fn format_undo_value(left_gain: i32, right_gain: i32, wrap: bool) -> String 
     format!("{:+04},{:+04},{}", left_gain, right_gain, wrap_flag)
 }
 
-/// Format a `MP3GAIN_MINMAX` / `MP3GAIN_ALBUM_MINMAX` tag value (`min,max`).
+/// Format a `MP3GAIN_MINMAX` / `MP3GAIN_ALBUM_MINMAX` tag value: `min,max`,
+/// each zero-padded to three digits (`094,168`), mp3gain's `%03d,%03d`. Its
+/// APEv2 reader takes the three bytes before the comma and the three after
+/// it at fixed offsets, so an unpadded `94,168` reads as a maximum of 68
+/// (issue #432). Parsers here accept both forms.
 pub fn format_minmax(min: u8, max: u8) -> String {
-    format!("{},{}", min, max)
+    format!("{min:03},{max:03}")
 }
 
 /// Format a `REPLAYGAIN_*_GAIN` tag value, 6-decimal precision per mp3gain
@@ -856,6 +860,15 @@ mod tests {
         assert_eq!(out.get(TAG_MP3GAIN_MINMAX), Some("131,225"));
     }
 
+    /// Issue #432: mp3gain writes and reads the range as `%03d,%03d` at fixed
+    /// offsets, so a value below 100 has to keep its leading zeros.
+    #[test]
+    fn minmax_is_zero_padded_like_mp3gain() {
+        assert_eq!(format_minmax(94, 168), "094,168");
+        assert_eq!(format_minmax(0, 7), "000,007");
+        assert_eq!(format_minmax(100, 255), "100,255");
+    }
+
     /// Issue #252: the tail-only rewrite must produce byte-identical output
     /// to the old full-buffer replace_ape_tag path — audio and trailing
     /// ID3v1 preserved, tag swapped in place.
@@ -952,9 +965,9 @@ mod tests {
             ("replaygain_track_peak", "0.177387", -2, "0.125432"),
             // The album range clamps like global_gain itself.
             (TAG_MP3GAIN_ALBUM_MINMAX, "148,248", 20, "168,255"),
-            (TAG_MP3GAIN_ALBUM_MINMAX, "3,100", -5, "0,95"),
+            (TAG_MP3GAIN_ALBUM_MINMAX, "3,100", -5, "000,095"),
             // A 0 stays 0, as the frames do (issue #417).
-            (TAG_MP3GAIN_ALBUM_MINMAX, "0,100", 5, "0,105"),
+            (TAG_MP3GAIN_ALBUM_MINMAX, "000,100", 5, "000,105"),
         ];
         for (key, value, steps, expected) in cases {
             assert_eq!(
