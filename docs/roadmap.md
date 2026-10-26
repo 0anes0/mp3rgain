@@ -20,6 +20,7 @@ What ships today:
 - [ ] Renew the Developer ID certificate before 2027-02-01 (#355)
 - [ ] Retire the Ubuntu PPA after 2026-12-31: stop uploading, remove `ppa.yml`, the `ppa` environment and its secrets, `packages/ppa*`, `scripts/build-ppa.sh` and `docs/ppa-setup.md`, and decide whether to delete the two Launchpad PPAs (a deleted PPA makes `apt update` fail, which at least tells its remaining users; one left in place keeps them on the last upload without a word)
 - [ ] Upgrade mp3rgui's egui/eframe stack, which also retires the quick-xml audit ignores in `ci.yml`
+- [ ] More mp3rgui translations, one `.po` file per language (#440); `pt_PT` and `it` are offered
 - [ ] Homebrew core formula (#8); today it is in the `M-Igashi/tap` tap
 - [ ] nixpkgs package (#314); the flake in this repo already works, see [packages/nix/README.md](../packages/nix/README.md)
 - [ ] Official Debian archive package (#394): the ITP is [#1126519](https://bugs.debian.org/1126519); `id3` still needs packaging in `debcargo-conf`, `indicatif` 0.18 and `console` 0.16 are only in experimental, and the upload needs a sponsor. Meanwhile every release is an apt repository
@@ -38,7 +39,7 @@ What ships today:
 
 ## Unreleased
 
-Nothing yet.
+- [x] mp3rgui can be translated, and speaks Brazilian Portuguese. Each language is a gettext `.po` file in `mp3rgui/locales/`, compiled into the binary, so a translation ships in every package with nothing extra to install, and a missing or outdated entry shows the English. A new Language menu offers System default, English and each translation under its own name, and remembers the choice. The CJK font for file names now follows the system language on macOS and Windows too, where it used to read only the POSIX locale variables, and a Chinese or Korean UI picks its own font. The CLI's output stays English. More languages are welcome through #440. Implemented and translated by @cfgnunes (#422)
 
 ## Release history
 
