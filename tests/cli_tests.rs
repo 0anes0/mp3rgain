@@ -669,7 +669,7 @@ fn manual_gain_shifts_stored_replaygain_values() {
             r.map(|r| {
                 let (min, max) = r.split_once(',').unwrap();
                 let shift = |v: &str| (v.parse::<i32>().unwrap() + steps).min(255);
-                format!("{},{}", shift(min), shift(max))
+                format!("{:03},{:03}", shift(min), shift(max))
             })
         };
 
